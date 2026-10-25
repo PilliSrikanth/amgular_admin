@@ -21,6 +21,8 @@ import { AboutusComponent } from './aboutus/aboutus.component';
 import { ContactusComponent } from './contactus/contactus.component';
 import { PrivacyPolicyComponent } from './privacy-policy/privacy-policy.component';
 import { TermsConditionsComponent } from './terms-conditions/terms-conditions.component';
+import { AdminPanelChatComponent } from './admin-panel-chat/admin-panel-chat.component';
+import { SubscriptionPlansComponent } from './subscription-plans/subscription-plans.component';
 
 @NgModule({
   declarations: [
@@ -40,7 +42,9 @@ import { TermsConditionsComponent } from './terms-conditions/terms-conditions.co
     AboutusComponent,
     ContactusComponent,
     PrivacyPolicyComponent,
-    TermsConditionsComponent
+    TermsConditionsComponent,
+    AdminPanelChatComponent,
+    SubscriptionPlansComponent
   ],
   imports: [
     BrowserModule,

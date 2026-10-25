@@ -1,0 +1,227 @@
+<div class="admin-chat-page">
+
+  <!-- LEFT USER LIST -->
+
+  <div class="user-list">
+
+    <div class="list-header">
+
+      <h2>
+        Support
+      </h2>
+
+      <span>
+        {{ conversations.length }}
+      </span>
+
+    </div>
+
+
+    <div
+      *ngFor="
+        let conversation
+        of conversations
+      "
+
+      class="user-item"
+
+      [class.active]="
+        selectedUser?._id ===
+        conversation.userId?._id
+      "
+
+      (click)="
+        selectUser(conversation)
+      "
+    >
+
+      <div class="user-avatar">
+
+        {{
+          conversation.userId?.name
+            ?.charAt(0)
+            ?.toUpperCase()
+        }}
+
+      </div>
+
+
+      <div class="user-details">
+
+        <strong>
+
+          {{
+            conversation.userId?.name
+              || 'User'
+          }}
+
+        </strong>
+
+        <p>
+
+          {{
+            conversation.message
+              | slice:0:35
+          }}
+
+          <span
+            *ngIf="
+              conversation.message?.length > 35
+            "
+          >
+            ...
+          </span>
+
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <div
+      *ngIf="
+        conversations.length === 0
+      "
+
+      class="no-users"
+    >
+      No conversations yet.
+    </div>
+
+  </div>
+
+
+  <!-- CHAT -->
+
+  <div class="chat-area">
+
+    <ng-container
+      *ngIf="
+        selectedUser;
+        else noConversation
+      "
+    >
+
+      <!-- HEADER -->
+
+      <div class="chat-header">
+
+        <div class="user-avatar">
+
+          {{
+            selectedUser.name
+              ?.charAt(0)
+              ?.toUpperCase()
+          }}
+
+        </div>
+
+        <div>
+
+          <strong>
+            {{ selectedUser.name }}
+          </strong>
+
+          <small>
+            {{ selectedUser.email }}
+          </small>
+
+        </div>
+
+      </div>
+
+
+      <!-- MESSAGES -->
+
+      <div
+        class="messages"
+        id="adminChatMessages"
+      >
+
+        <div
+          *ngFor="
+            let m of messages
+          "
+
+          class="message-row"
+
+          [class.admin-message]="
+            m.senderType === 'admin'
+          "
+
+          [class.user-message]="
+            m.senderType === 'user'
+          "
+        >
+
+          <div class="message-bubble">
+
+            <div>
+              {{ m.message }}
+            </div>
+
+            <small>
+
+              {{
+                m.createdAt
+                  | date:'shortTime'
+              }}
+
+            </small>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- INPUT -->
+
+      <div class="chat-input">
+
+        <textarea
+          [(ngModel)]="messageText"
+          (keydown)="onEnter($event)"
+          placeholder="Reply to user..."
+          rows="1"
+        ></textarea>
+
+        <button
+          (click)="sendMessage()"
+          [disabled]="!messageText.trim()"
+        >
+          ➤
+        </button>
+
+      </div>
+
+    </ng-container>
+
+
+    <ng-template
+      #noConversation
+    >
+
+      <div class="welcome">
+
+        <div>
+          💬
+        </div>
+
+        <h2>
+          Admin Support
+        </h2>
+
+        <p>
+          Select a user to start chatting.
+        </p>
+
+      </div>
+
+    </ng-template>
+
+  </div>
+
+</div>

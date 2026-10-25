@@ -14,6 +14,7 @@ export class CreateHostelComponent {
     address: '',
     type: '',
     roomSharing: {},
+    services: [],
     vacancy: {},
     location: {
       type: 'Point',
@@ -34,6 +35,8 @@ export class CreateHostelComponent {
   // PREVIEWS
   sharingImagePreviews: string[] = [];
   sharingVideoPreviews: string[] = [];
+
+  selectedServices: string[] = [];
 
   constructor(private hostelService: HostelService) {}
 
@@ -181,5 +184,42 @@ export class CreateHostelComponent {
     error: err => console.error(err)
   });
 }
+
+servicesList: string[] = [
+  'Wi-Fi',
+  'Washing Machine',
+  'Food',
+  'AC',
+  'Non-AC',
+  'Parking',
+  'Power Backup',
+  'Water Heater',
+  'RO Water',
+  'House Keeping',
+  'Security / CCTV',
+  'Lift',
+  '24/7 Water',
+  'Study Room',
+  'TV',
+  'Gym'
+];
+
+toggleService(service: string, event: any) {
+  if (event.target.checked) {
+    if (!this.selectedServices.includes(service)) {
+      this.selectedServices.push(service);
+    }
+  } else {
+    this.selectedServices = this.selectedServices.filter(
+      s => s !== service
+    );
+  }
+
+  // Copy to hostel object
+  this.hostel.services = [...this.selectedServices];
+
+  console.log('Selected Services:', this.hostel.services);
+}
+
 
 }

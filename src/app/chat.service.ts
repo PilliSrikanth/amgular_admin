@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
 @Injectable({ providedIn: 'root' })
 export class ChatService {
 
-  api = 'http://localhost:3200/api/chat';
+  api = ' http://localhost:3200/api/chat';
 
   constructor(private http: HttpClient) {}
 

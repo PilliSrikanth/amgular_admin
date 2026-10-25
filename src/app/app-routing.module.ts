@@ -16,10 +16,13 @@ import { AboutusComponent } from './aboutus/aboutus.component';
 import { ContactusComponent } from './contactus/contactus.component';
 import { TermsConditionsComponent } from './terms-conditions/terms-conditions.component';
 import { PrivacyPolicyComponent } from './privacy-policy/privacy-policy.component';
+import { AdminPanelChatComponent } from './admin-panel-chat/admin-panel-chat.component';
+import { SubscriptionPlansComponent } from './subscription-plans/subscription-plans.component';
 
 const routes: Routes = [
   {path:'', component:LoginComponent},
-  {path:'login', component:LoginComponent},
+  { path: 'login', component: LoginComponent },
+  { path: 'subscription-plans', component: SubscriptionPlansComponent },
   {path:'register', component:RegisterComponent},
   {path:'home', component:HomeComponent},
   {path:'profile', component:ProfileComponent},
@@ -34,7 +37,9 @@ const routes: Routes = [
   {path:'aboutus', component:AboutusComponent},
   {path:'contact', component:ContactusComponent},
   {path:'terms&conditions',component:TermsConditionsComponent},
-  {path:'privacy&policy', component:PrivacyPolicyComponent}
+  {path:'privacy&policy', component:PrivacyPolicyComponent},
+  {path: 'admin-support',component: AdminPanelChatComponent},
+  {path: 'subscription',component: SubscriptionPlansComponent}
 
 ];
 

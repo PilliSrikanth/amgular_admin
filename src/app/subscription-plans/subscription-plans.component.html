@@ -1,0 +1,168 @@
+
+<div class="subscription-page">
+
+  <!-- Page Header -->
+  <header class="page-header">
+    <div class="header-content">
+      <span class="eyebrow">OWNER MEMBERSHIP</span>
+      <h1>Choose Your Subscription</h1>
+      <p>Grow your rental business with simple, affordable pricing.</p>
+    </div>
+
+    <div class="secure-label">
+      <span class="secure-icon">✓</span>
+      Secure Payments
+    </div>
+  </header>
+
+  <!-- Current Subscription -->
+  <section class="current-plan">
+    <div class="current-icon">⌂</div>
+
+    <div class="current-info">
+      <span class="current-label">YOUR SUBSCRIPTION</span>
+      <h3>{{ currentPlanName }}</h3>
+      <p>{{ currentPlanMessage }}</p>
+    </div>
+
+    <span
+      class="status-pill"
+      [class.active]="isSubscribed">
+      {{ isSubscribed ? 'Active' : 'Not Subscribed' }}
+    </span>
+  </section>
+
+  <!-- Pricing Heading -->
+  <section class="pricing-heading">
+    <span class="eyebrow">SIMPLE PRICING</span>
+    <h2>A Plan That Works for You</h2>
+    <p>One affordable monthly plan for hostel and rental owners.</p>
+  </section>
+
+  <!-- Subscription Plans -->
+  <section class="plans-grid">
+
+    <!-- ₹1 Monthly Plan -->
+    <article class="plan-card">
+
+      <div class="plan-top">
+        <div class="plan-icon">🏠</div>
+        <span class="popular-badge">OWNER PLAN</span>
+      </div>
+
+      <h3>Owner Monthly</h3>
+
+      <p class="plan-description">
+        Everything you need to manage your rental properties.
+      </p>
+
+      <div class="price">
+        <span class="currency">₹</span>
+        <span class="amount">1</span>
+        <span class="period">/ month</span>
+      </div>
+
+      <p class="billing-note">
+        Valid for 30 days after successful payment.
+      </p>
+
+      <div class="plan-divider"></div>
+
+      <h4>What's included</h4>
+
+      <ul class="feature-list">
+        <li><span class="check">✓</span> List hostel properties</li>
+        <li><span class="check">✓</span> List rooms and rental houses</li>
+        <li><span class="check">✓</span> Manage property information</li>
+        <li><span class="check">✓</span> Receive booking enquiries</li>
+        <li><span class="check">✓</span> Access the owner dashboard</li>
+        <li><span class="check">✓</span> Manage rental listings</li>
+        <li><span class="check">✓</span> Subscription support</li>
+      </ul>
+
+      <button
+        type="button"
+        class="subscribe-button"
+        [disabled]="loading"
+        (click)="subscribe()">
+
+        {{ loading
+          ? 'Processing...'
+          : isSubscribed
+            ? 'Renew Subscription'
+            : 'Subscribe for ₹1' }}
+
+        <span class="arrow">→</span>
+      </button>
+
+      <p class="payment-note">
+        🔒 Secure payment powered by Cashfree
+      </p>
+
+    </article>
+
+    <!-- Benefits Section -->
+    <aside class="benefits-card">
+
+      <div class="benefits-art">↗</div>
+
+      <span class="eyebrow">BUILT FOR PROPERTY OWNERS</span>
+
+      <h2>
+        More Visibility.<br>
+        Better Management.
+      </h2>
+
+      <p class="benefits-description">
+        Manage your hostels, rooms and rental properties
+        from one convenient dashboard.
+      </p>
+
+      <div class="benefit-row">
+        <div class="benefit-icon">⌂</div>
+        <div>
+          <h4>Manage Properties</h4>
+          <p>Keep your property information organised.</p>
+        </div>
+      </div>
+
+      <div class="benefit-row">
+        <div class="benefit-icon">↗</div>
+        <div>
+          <h4>Handle Enquiries</h4>
+          <p>Manage potential tenants and booking enquiries.</p>
+        </div>
+      </div>
+
+      <div class="benefit-row">
+        <div class="benefit-icon">◷</div>
+        <div>
+          <h4>Monthly Subscription</h4>
+          <p>Pay ₹1 for each 30-day subscription period.</p>
+        </div>
+      </div>
+
+      <div class="support-note">
+        <span class="support-star">✦</span>
+        <div>
+          <strong>Ready to get started?</strong>
+          <p>
+            Subscribe to access the features available
+            to your owner account.
+          </p>
+        </div>
+      </div>
+
+    </aside>
+  </section>
+
+  <!-- Footer -->
+  <footer class="page-footer">
+    <p>
+      All prices are in Indian Rupees (INR).
+      Your subscription activates after successful server-side
+      payment verification.
+    </p>
+  </footer>
+
+</div>
