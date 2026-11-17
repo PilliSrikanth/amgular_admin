@@ -8,11 +8,11 @@ import { Observable, fromEvent } from 'rxjs';
   providedIn: 'root'
 })
 export class AdminChatService {
-  private apiUrl = 'http://localhost:3200/api/admin-chat';
+  private apiUrl = 'https://desktop-7rujm19.tailb99dfe.ts.net/api/admin-chat';
   private socket: Socket;
 
   constructor(private http: HttpClient) {
-    this.socket = io('http://localhost:3200', {
+    this.socket = io('https://desktop-7rujm19.tailb99dfe.ts.net', {
       transports: ['websocket', 'polling']
     });
 

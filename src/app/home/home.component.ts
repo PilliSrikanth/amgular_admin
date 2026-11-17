@@ -1,6 +1,7 @@
+
 import { Component, OnInit } from '@angular/core';
 import { HostelService } from '../hostel.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -9,73 +10,213 @@ import { ActivatedRoute, Router } from '@angular/router';
 })
 export class HomeComponent implements OnInit {
 
-  hostels: any[] = [];           // all hostels
-  filteredHostels: any[] = [];   // filtered hostels
-  categories = ['Mens', "Women's", 'Room']; // categories
-  activeCategory = 'Mens';       // default active category
-  ownerId: any;
+  hostels: any[] = [];
+  filteredHostels: any[] = [];
 
-  constructor(private hostelService: HostelService, private router: Router, private route: ActivatedRoute) {}
+  categories = ['Mens', "Women's", 'Room'];
+  activeCategory = 'Mens';
 
-  ngOnInit() {
+  ownerId: string | null = null;
+  loading = false;
+
+  constructor(
+    private hostelService: HostelService,
+    private router: Router
+  ) {}
+
+  ngOnInit(): void {
     this.ownerId = localStorage.getItem('ownerId');
+
+    if (!this.ownerId) {
+      console.error('Owner ID not found. Please login again.');
+      return;
+    }
+
     this.loadHostels();
   }
 
-  loadHostels() {
+  // Load ALL hostels belonging to logged-in owner
+  loadHostels(): void {
+
+    if (!this.ownerId) {
+      return;
+    }
+
+    this.loading = true;
+
     this.hostelService.getHostelsByOwner(this.ownerId).subscribe({
+
       next: async (res: any) => {
-        // calculate total vacancy and ratings for each hostel
-        const hostelsWithRating = await Promise.all(
-          res.map(async (h: any) => {
-            const totalVacancyCount = Object.values(h.vacancy || {}).reduce(
-              (sum: number, val: any) => sum + Number(val), 0
+
+        console.log('Hostel API response:', res);
+
+        // API response format: { data: [...] }
+        const hostelList = Array.isArray(res?.data)
+          ? res.data
+          : Array.isArray(res)
+            ? res
+            : [];
+
+        console.log('All owner hostels:', hostelList);
+
+        // DO NOT FILTER OUT PENDING OR EXPIRED HOSTELS
+        const hostelsWithDetails = await Promise.all(
+          hostelList.map(async (h: any) => {
+
+            const vacancy = h.vacancy || {};
+
+            const totalVacancyCount = Object.values(vacancy).reduce(
+              (sum: number, value: any) =>
+                sum + (Number(value) || 0),
+              0
             );
-            const totalFilled = h.hostelUsers?.length || 0;
 
-            // fetch hostel reviews
-            const reviewsRes: any = await this.hostelService.getReviewsByHostel(h._id).toPromise();
-            const reviews = reviewsRes?.data || [];
-
-            const avgRating = reviews.length
-              ? (reviews.reduce((sum: number, r: any) => sum + Number(r.rating), 0) / reviews.length).toFixed(1)
+            const totalFilled = Array.isArray(h.hostelUsers)
+              ? h.hostelUsers.length
               : 0;
 
-            return { ...h, totalFilled, totalVacancy: totalVacancyCount - totalFilled, avgRating, reviews };
+            let reviews: any[] = [];
+
+            try {
+              const reviewsRes: any = await this.hostelService
+                .getReviewsByHostel(h._id)
+                .toPromise();
+
+              reviews = Array.isArray(reviewsRes?.data)
+                ? reviewsRes.data
+                : Array.isArray(reviewsRes)
+                  ? reviewsRes
+                  : [];
+
+            } catch (error) {
+              console.error('Review loading failed:', error);
+            }
+
+            const avgRating = reviews.length > 0
+              ? (
+                  reviews.reduce(
+                    (sum: number, review: any) =>
+                      sum + Number(review.rating || 0),
+                    0
+                  ) / reviews.length
+                ).toFixed(1)
+              : 0;
+
+            return {
+              ...h,
+              totalFilled,
+              totalVacancy: Math.max(
+                0,
+                totalVacancyCount - totalFilled
+              ),
+              avgRating,
+              reviews
+            };
           })
         );
 
-        this.hostels = hostelsWithRating;
+        this.hostels = hostelsWithDetails;
+
         this.filterByCategory(this.activeCategory);
+
+        console.log('Hostels displayed:', this.hostels);
+
+        this.loading = false;
       },
-      error: (err) => console.log('error:', err)
+
+      error: (err: any) => {
+        console.error('Hostel loading error:', err);
+        this.loading = false;
+      }
+
     });
   }
 
-  filterByCategory(category: string) {
+  // Filter by category
+  filterByCategory(category: string): void {
+
     this.activeCategory = category;
 
     const mapCategory: { [key: string]: string } = {
-      "Mens": "boys",
-      "Women's": "girls",
-      "Room": "room"
+      'Mens': 'boys',
+      "Women's": 'girls',
+      'Room': 'room'
     };
 
     const dbType = mapCategory[category];
 
     if (dbType) {
-      this.filteredHostels = this.hostels.filter(h => h.type?.toLowerCase() === dbType);
+      this.filteredHostels = this.hostels.filter(
+        (h: any) =>
+          String(h.type || '').toLowerCase() === dbType
+      );
     } else {
       this.filteredHostels = [...this.hostels];
     }
+
   }
 
-  openHostel(hostelId: string) {
-    this.router.navigate(['/hostel-page', hostelId]);
+  // Navigate according to subscription status
+  openHostel(hostel: any): void {
+
+    const status = String(
+      hostel.subscriptionStatus || ''
+    ).toUpperCase();
+
+    console.log('Selected hostel:', hostel);
+    console.log('Subscription status:', status);
+
+    if (status === 'ACTIVE' && hostel.isPublished === true) {
+
+      // Active subscription: open hostel details
+      this.router.navigate([
+        '/hostel-page',
+        hostel._id
+      ]);
+
+    } else {
+
+      // Pending, expired or suspended: open payment page
+      this.router.navigate(
+        ['/subscription-plans'],
+        {
+          queryParams: {
+            hostelId: hostel._id
+          }
+        }
+      );
+
+    }
   }
 
-  createHostel() {
+  // Create new hostel
+  createHostel(): void {
     this.router.navigate(['/create-hostel']);
+  }
+
+  // Get subscription status label
+  getStatusLabel(hostel: any): string {
+
+    const status = String(
+      hostel.subscriptionStatus || ''
+    ).toUpperCase();
+
+    switch (status) {
+      case 'ACTIVE':
+        return 'Active';
+
+      case 'PENDING_PAYMENT':
+        return 'Payment Pending';
+
+      case 'EXPIRED':
+        return 'Expired';
+
+      case 'SUSPENDED':
+        return 'Suspended';
+
+      default:
+        return 'Not Subscribed';
+    }
   }
 
 }

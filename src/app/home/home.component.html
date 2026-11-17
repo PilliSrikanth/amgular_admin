@@ -1,71 +1,224 @@
+
 <div class="home-page">
 
-  <!-- top bar -->
-  <div class="top-bar">
-    <i class="fa-solid fa-ellipsis-vertical" routerLink="/profile"></i>
+  <!-- Top Navigation -->
+  <header class="top-bar">
+    <button class="icon-btn" routerLink="/profile" aria-label="Profile">
+      <i class="fa-solid fa-user"></i>
+    </button>
+
     <div class="location">
       <i class="fa-solid fa-location-dot"></i>
-      <span>ASdigitech</span>
+      <div>
+        <small>Welcome to</small>
+        <strong>AS Digitech</strong>
+      </div>
     </div>
-    <i class="fa-regular fa-bell" routerLink="/notification"></i>
-  </div>
 
-  <!-- search -->
+    <button class="icon-btn" routerLink="/notification" aria-label="Notifications">
+      <i class="fa-regular fa-bell"></i>
+    </button>
+  </header>
+
+  <!-- Search -->
   <div class="search-box">
     <i class="fa-solid fa-magnifying-glass"></i>
-    <input type="text" placeholder="Search">
+    <input type="text" placeholder="Search hostels, rooms..." />
   </div>
 
-  <!-- banner -->
-  <div class="banner">
-    <img src="assets/banner.png" />
-  </div>
+  <!-- Banner -->
+  <section class="banner">
+    <img src="assets/banner.png" alt="AS Digitech services banner" />
 
-  Welcome to AS Digitech Innovations Services
+    <div class="banner-overlay">
+      <span class="banner-tag">AS DIGITECH INNOVATIONS</span>
+      <h1>Find a place<br>that feels like home.</h1>
+      <p>Discover hostels and rooms that suit your needs.</p>
+    </div>
+  </section>
 
-
-
-<!-- Category -->
-<h4 class="cat-title">Category</h4>
-<div class="category-buttons">
-  <button
-    *ngFor="let cat of categories"
-    [class.active]="activeCategory === cat"
-    (click)="filterByCategory(cat)"
-  >
-    {{ cat }}
-  </button>
-</div>
-
-<!-- Hostel Cards -->
-<div class="hostels">
-  <div class="card" *ngFor="let h of filteredHostels" (click)="openHostel(h._id)">
-    <img [src]="h.images[0] ? h.images[0] : 'assets/noimage.png'" />
-    <h5>{{ h.name }}</h5>
-    <span>
-      Filled: {{ h.totalFilled }} | Vacancy: {{ h.totalVacancy }}
-    </span>
-
-    <!-- Display hostel average rating -->
-    <div class="rating">
-      <ng-container *ngFor="let star of [1,2,3,4,5]">
-        <i class="fa-solid fa-star" 
-           [ngClass]="{'filled': star <= h.avgRating}"></i>
-      </ng-container>
-      <span>{{ h.avgRating }}/5</span>
+  <!-- Page Heading -->
+  <section class="welcome-section">
+    <div>
+      <h2>Explore Your Stay</h2>
+      <p>Find your perfect place to stay.</p>
     </div>
 
-  </div>
-</div>
+    <button class="subscribe-btn" routerLink="/subscription">
+      <i class="fa-solid fa-crown"></i>
+      Subscribe
+    </button>
+  </section>
 
-<div class="subscribe" routerLink="/subscription">subscribe</div>
+  <!-- Categories -->
+  <section class="category-section">
+    <h3>Browse Categories</h3>
 
+    <div class="category-buttons">
+      <button
+        *ngFor="let cat of categories"
+        [class.active]="activeCategory === cat"
+        (click)="filterByCategory(cat)">
 
-<button routerLink="/admin-support">chat</button>
+        {{ cat }}
 
-  <!-- create hostel -->
+      </button>
+    </div>
+  </section>
+
+  <!-- Hostel Listings -->
+  <section class="listing-section">
+
+    <div class="listing-heading">
+      <h3>My Properties</h3>
+      <span>{{ filteredHostels.length }} listings</span>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="loading" class="loading-state">
+      <i class="fa-solid fa-spinner fa-spin"></i>
+      <p>Loading your properties...</p>
+    </div>
+
+    <!-- Hostel Cards -->
+    <div
+      class="hostels"
+      *ngIf="!loading && filteredHostels.length > 0">
+
+      <article
+        class="hostel-card"
+        *ngFor="let h of filteredHostels"
+        (click)="openHostel(h)">
+
+        <!-- Image -->
+        <div class="hostel-image">
+
+          <img
+            [src]="h.images?.length && h.images[0]
+              ? h.images[0]
+              : 'assets/noimage.png'"
+            [alt]="h.name"
+            loading="lazy">
+
+          <span class="property-label">For Rent</span>
+
+          <!-- Subscription Status -->
+          <span
+            class="subscription-status"
+            [ngClass]="{
+              'status-active': h.subscriptionStatus === 'ACTIVE',
+              'status-pending': h.subscriptionStatus === 'PENDING_PAYMENT',
+              'status-expired': h.subscriptionStatus === 'EXPIRED',
+              'status-suspended': h.subscriptionStatus === 'SUSPENDED'
+            }">
+
+            {{ getStatusLabel(h) }}
+
+          </span>
+
+        </div>
+
+        <!-- Details -->
+        <div class="hostel-details">
+
+          <h4>{{ h.name }}</h4>
+
+          <!--<p class="hostel-address">
+            <i class="fa-solid fa-location-dot"></i>
+            {{ h.address || h.area }}
+          </p>-->
+
+          <div class="occupancy">
+
+            <span>
+              <i class="fa-solid fa-users"></i>
+              Filled: {{ h.totalFilled }}
+            </span>
+
+            <span>
+              <i class="fa-solid fa-bed"></i>
+              Vacancy: {{ h.totalVacancy }}
+            </span>
+
+          </div>
+
+          <div class="rating">
+            <i class="fa-solid fa-star"></i>
+            <strong>{{ h.avgRating || 0 }}/5</strong>
+            <span>Average rating</span>
+          </div>
+
+          <!-- Action Text -->
+          <div class="view-property">
+
+            <ng-container
+              *ngIf="h.subscriptionStatus === 'ACTIVE' && h.isPublished === true; else paymentAction">
+
+              View property
+              <i class="fa-solid fa-arrow-right"></i>
+
+            </ng-container>
+
+            <ng-template #paymentAction>
+
+              <span *ngIf="h.subscriptionStatus === 'EXPIRED'">
+                Renew subscription
+              </span>
+
+              <span *ngIf="h.subscriptionStatus === 'PENDING_PAYMENT'">
+                Complete payment
+              </span>
+
+              <span *ngIf="
+                h.subscriptionStatus !== 'EXPIRED' &&
+                h.subscriptionStatus !== 'PENDING_PAYMENT'
+              ">
+                Activate subscription
+              </span>
+
+              <i class="fa-solid fa-arrow-right"></i>
+
+            </ng-template>
+
+          </div>
+
+        </div>
+
+      </article>
+
+    </div>
+
+    <!-- No Hostels -->
+    <div
+      class="empty-state"
+      *ngIf="!loading && filteredHostels.length === 0">
+
+      <i class="fa-solid fa-house-circle-xmark"></i>
+
+      <h4>No properties found</h4>
+
+      <p>Try another category or create a new property.</p>
+
+    </div>
+
+  </section>
+
+  <!-- Create Hostel -->
   <button class="create-btn" (click)="createHostel()">
-    Create an Hostel
+    <i class="fa-solid fa-plus"></i>
+    Create a Hostel
+  </button>
+
+  <!-- Support -->
+  <button
+    class="chat-btn"
+    routerLink="/admin-support"
+    aria-label="Chat with support"
+    title="Chat with Support">
+
+    <i class="fa-solid fa-comments"></i>
+    <span>Support</span>
+
   </button>
 
 </div>

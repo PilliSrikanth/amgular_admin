@@ -1,27 +1,74 @@
-import { HttpClient } from '@angular/common/http';
+
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class HostelService {
-  baseUrl = 'http://localhost:3200/api';
 
-  constructor(private http: HttpClient) { }
+  baseUrl = 'https://desktop-7rujm19.tailb99dfe.ts.net/api';
 
+  constructor(private http: HttpClient) {}
+
+  // Get owner authentication token
+  private getAuthHeaders(): HttpHeaders {
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+      throw new Error('Owner token not found. Please login again.');
+    }
+
+    return new HttpHeaders({
+      Authorization: `Bearer ${token}`
+    });
+  }
+
+  // Get all hostels belonging to the logged-in owner
   getHostelsByOwner(ownerId: string): Observable<any> {
-    return this.http.get(`${this.baseUrl}/hostels/owner/${ownerId}`);
+    if (!ownerId) {
+      return throwError(() => new Error('Owner ID is required.'));
+    }
+
+    try {
+      return this.http.get(
+        `${this.baseUrl}/hostels/owner/${ownerId}`,
+        {
+          headers: this.getAuthHeaders()
+        }
+      );
+    } catch (error: any) {
+      return throwError(() => error);
+    }
   }
 
-    createHostel(hostelData: any): Observable<any> {
-    return this.http.post(`${this.baseUrl}/hostels/add`, hostelData);
+  // Create a new hostel
+  createHostel(hostelData: FormData): Observable<any> {
+    try {
+      return this.http.post(
+        `${this.baseUrl}/hostels/add`,
+        hostelData,
+        {
+          headers: this.getAuthHeaders()
+        }
+      );
+    } catch (error: any) {
+      return throwError(() => error);
+    }
   }
 
-  getHostelById(hostelId: string) {
-    return this.http.get(`${this.baseUrl}/hostels/${hostelId}`);
+  // Get hostel by ID
+  getHostelById(hostelId: string): Observable<any> {
+    return this.http.get(
+      `${this.baseUrl}/hostels/${hostelId}`
+    );
   }
-    getReviewsByHostel(hostelId: string): Observable<any> {
-    return this.http.get(`${this.baseUrl}/reviews/hostel/${hostelId}`);
+
+  // Get reviews by hostel ID
+  getReviewsByHostel(hostelId: string): Observable<any> {
+    return this.http.get(
+      `${this.baseUrl}/reviews/hostel/${hostelId}`
+    );
   }
 }

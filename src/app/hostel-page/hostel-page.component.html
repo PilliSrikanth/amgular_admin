@@ -1,51 +1,181 @@
+
 <div class="page">
 
-  <!-- Top bar -->
-  <div class="top-header">
-    <i class="fa-solid fa-ellipsis-vertical"></i>
-    <span>{{ hostel?.name }}</span>
-    <i class="fa-regular fa-user"></i>
-  </div>
+  <!-- Top Header -->
+  <header class="top-header">
+    <button class="icon-btn" routerLink="/profile" aria-label="Profile">
+      <i class="fa-solid fa-arrow-left"></i>
+    </button>
+
+    <div class="header-title">
+      <span class="eyebrow">PROPERTY DASHBOARD</span>
+      <h2>{{ hostel?.name || 'My Hostel' }}</h2>
+    </div>
+
+    <button class="icon-btn" routerLink="/notification" aria-label="Notifications">
+      <i class="fa-regular fa-bell"></i>
+    </button>
+  </header>
 
   <!-- Search -->
   <div class="search-box">
     <i class="fa-solid fa-magnifying-glass"></i>
-    <input type="text" placeholder="Search">
+    <input type="text" placeholder="Search dashboard..." />
   </div>
 
-  <!-- Banner --
-  <div class="banner">
-    <img src="{{hostelImage}}" />
-  </div>-->
+  <!-- Property Summary -->
+  <section class="property-summary" *ngIf="hostel">
+    <div class="summary-heading">
+      <div>
+        <span class="summary-label">YOUR PROPERTY</span>
+        <h1>{{ hostel.name }}</h1>
+        <p>Manage your hostel and residents in one place.</p>
+      </div>
 
-  <!-- Hostels vacancy row -->
-  <div class="top-row" *ngIf="hostel">
-    <span>Filled: {{ hostel.totalFilled }}</span>
-    <span>Vacancy: {{hostel.totalVacancy}}</span>
-  </div>
+      <div class="property-icon">
+        <i class="fa-solid fa-building"></i>
+      </div>
+    </div>
 
-  <!-- 3 cards -->
-  <div class="card-menu">
-    <div class="menu-card" (click)="goToTransactions(hostel._id)"> <i class="fa-solid fa-dollar-sign"></i> Transactions <i class="fa-solid fa-user-plus"></i></div>
-    <div class="menu-card" (click)="goToHostelUsers(hostel._id)"> <i class="fa-solid fa-users"></i> hostel Users <i class="fa-solid fa-user-plus"></i></div>
-    <div class="menu-card" (click)="goToAddUser(hostel._id)"><i class="fa-solid fa-user-plus"></i> Add user <i class="fa-solid fa-user-plus"></i></div>
+    <div class="stats-row">
+      <div class="stat-box">
+        <div class="stat-icon filled-icon">
+          <i class="fa-solid fa-users"></i>
+        </div>
+        <div>
+          <span>Filled</span>
+          <strong>{{ hostel.totalFilled || 0 }}</strong>
+        </div>
+      </div>
+
+      <div class="stat-box">
+        <div class="stat-icon vacancy-icon">
+          <i class="fa-solid fa-bed"></i>
+        </div>
+        <div>
+          <span>Vacancy</span>
+          <strong>{{ hostel.totalVacancy || 0 }}</strong>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick Actions -->
+  <section class="actions-section">
+    <div class="section-heading">
+      <div>
+        <h3>Quick Actions</h3>
+        <p>Manage your property easily</p>
+      </div>
+    </div>
+
+    <div class="card-menu">
+
+      <button class="menu-card transactions-card"
+        type="button"
+        (click)="goToTransactions(hostel._id)"
+        *ngIf="hostel">
+
+        <div class="menu-icon">
+          <i class="fa-solid fa-wallet"></i>
+        </div>
+
+        <div class="menu-content">
+          <strong>Transactions</strong>
+          <span>View payments and records</span>
+        </div>
+
+        <i class="fa-solid fa-chevron-right arrow-icon"></i>
+      </button>
+
+      <button class="menu-card users-card"
+        type="button"
+        (click)="goToHostelUsers(hostel._id)"
+        *ngIf="hostel">
+
+        <div class="menu-icon">
+          <i class="fa-solid fa-users"></i>
+        </div>
+
+        <div class="menu-content">
+          <strong>Hostel Users</strong>
+          <span>View and manage residents</span>
+        </div>
+
+        <i class="fa-solid fa-chevron-right arrow-icon"></i>
+      </button>
+
+      <button class="menu-card add-user-card"
+        type="button"
+        (click)="goToAddUser(hostel._id)"
+        *ngIf="hostel">
+
+        <div class="menu-icon">
+          <i class="fa-solid fa-user-plus"></i>
+        </div>
+
+        <div class="menu-content">
+          <strong>Add User</strong>
+          <span>Add a resident to your hostel</span>
+        </div>
+
+        <i class="fa-solid fa-chevron-right arrow-icon"></i>
+      </button>
+
+    </div>
+  </section>
+
+  <!-- Reviews -->
+  <section class="reviews-section">
+    <div class="section-heading reviews-heading">
+      <div>
+        <h3>My Reviews</h3>
+        <p>Feedback from your residents</p>
+      </div>
+
+      <span class="review-count">{{ reviews?.length || 0 }} reviews</span>
+    </div>
+
+    <div class="review-list" *ngIf="reviews?.length; else noReviews">
+
+      <article class="review-card" *ngFor="let r of reviews">
+
+        <img
+          class="review-avatar"
+          [src]="r.userId?.image || 'assets/default-user.png'"
+          [alt]="r.userId?.name || 'Anonymous'"
+          loading="lazy" />
+
+        <div class="review-details">
+          <div class="review-user-row">
+            <strong class="review-name">
+              {{ r.userId?.name || 'Anonymous' }}
+            </strong>
+
+            <span class="review-rating">
+              <i class="fa-solid fa-star"></i>
+              {{ r.rating }}/5
+            </span>
+          </div>
+
+          <p class="review-comment">
+            {{ r.comment || 'No comment provided.' }}
+          </p>
+        </div>
+
+      </article>
+
+    </div>
+
+    <ng-template #noReviews>
+      <div class="empty-reviews">
+        <div class="empty-review-icon">
+          <i class="fa-regular fa-comments"></i>
+        </div>
+        <h4>No reviews yet</h4>
+        <p>Resident feedback will appear here when available.</p>
+      </div>
+    </ng-template>
+  </section>
+
 </div>
-
-  <!-- My Reviews -->
-<div class="reviews-title">My Reviews</div>
-
-<div class="review-card" *ngFor="let r of reviews">
-  <img [src]="r.userId?.image || 'default-user.png'" alt="{{r.userId?.name || 'Anonymous'}}" />
-  <div class="details">
-    <div class="name">{{r.userId?.name || 'Anonymous'}}</div>
-    <div class="comment">{{r.comment}}</div>
-  </div>
-  <div class="rating">
-    <i class="fa-solid fa-star"></i> {{r.rating}}
-  </div>
-</div>
-
-
-</div>
-
-

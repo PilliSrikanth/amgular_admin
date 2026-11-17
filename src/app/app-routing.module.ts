@@ -39,7 +39,15 @@ const routes: Routes = [
   {path:'terms&conditions',component:TermsConditionsComponent},
   {path:'privacy&policy', component:PrivacyPolicyComponent},
   {path: 'admin-support',component: AdminPanelChatComponent},
-  {path: 'subscription',component: SubscriptionPlansComponent}
+  {path: 'subscription',component: SubscriptionPlansComponent},
+  {path: 'admin-support/:userId',component:AdminPanelChatComponent},
+  {
+  path: 'subscription-plans',
+  loadComponent: () =>
+    import('./subscription-plans/subscription-plans.component')
+      .then(m => m.SubscriptionPlansComponent)
+}
+
 
 ];
 

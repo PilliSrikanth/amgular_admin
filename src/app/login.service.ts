@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
@@ -7,7 +7,8 @@ import { Observable } from 'rxjs';
 })
 export class LoginService {
 
-  baseUrl = "http://localhost:3200/api/owner/";
+  baseUrl = "https://desktop-7rujm19.tailb99dfe.ts.net/api/owner/";
+  apiUrl = "https://desktop-7rujm19.tailb99dfe.ts.net/api/";
 
   constructor(private http: HttpClient) { }
 
@@ -18,5 +19,17 @@ export class LoginService {
     login(data:any){
     return this.http.post(this.baseUrl + "login", data);
   }
-  
+
+  getMySubscription(): Observable<any> {
+    const token = localStorage.getItem('token') || '';
+
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`
+    });
+
+    return this.http.get(
+      `${this.apiUrl}subscriptions/my`,
+      { headers }
+    );
+  }
 }

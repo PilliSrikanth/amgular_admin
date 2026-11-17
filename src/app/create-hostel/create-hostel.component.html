@@ -1,96 +1,587 @@
-<div class="page">
-  <form (ngSubmit)="createHostel()">
 
-        <!-- HOSTEL TYPE -->
-    <label>Type</label>
-    <div class="category-buttons">
-      <button type="button" [class.active]="hostel.type==='boys'" (click)="hostel.type='boys'">Boys</button>
-      <button type="button" [class.active]="hostel.type==='girls'" (click)="hostel.type='girls'">Girls</button>
-      <button type="button" [class.active]="hostel.type==='room'" (click)="hostel.type='room'">Room</button>
-    </div>
+<form #propertyForm="ngForm" (ngSubmit)="createHostel()">
 
-    <!-- BASIC DETAILS -->
-    <label>Name</label>
-    <input type="text" [(ngModel)]="hostel.name" name="name" required>
+  <!-- 01. BASIC DETAILS -->
+  <section class="form-section">
 
-    <label>Area</label>
-    <input type="text" [(ngModel)]="hostel.area" name="area" required>
-
-    <label>Address</label>
-    <input type="text" [(ngModel)]="hostel.address" name="address">
-
-    <!-- SHARING SELECTION -->
-    <label>Sharing Rooms</label>
-    <div class="sharing">
-      <div *ngFor="let s of sharing"
-           class="share-box"
-           [class.active]="selectedShare === s"
-           (click)="selectSharing(s)">
-        {{ s }}
+    <div class="section-heading">
+      <div class="section-number">01</div>
+      <div>
+        <h3>Basic Details</h3>
+        <p>Select the type of property you want to list</p>
       </div>
     </div>
 
-    <!-- SHARING DETAILS -->
-    <div *ngIf="selectedShare !== null">
+    <div class="form-group full-width">
+      <label class="field-label">Property Type <span>*</span></label>
 
-      <h4>{{ selectedShare }} Sharing</h4>
+      <div class="category-buttons">
 
-      <label>Price</label>
-      <input type="number" [(ngModel)]="sharePrice" name="price" (change)="setSharePrice()">
+        <button type="button"
+          [class.active]="hostel.type === 'boys'"
+          (click)="changePropertyType('boys')">
+          <i class="fa-solid fa-person"></i>
+          <span>Boys Hostel</span>
+          <i *ngIf="hostel.type === 'boys'"
+            class="fa-solid fa-circle-check selected-check"></i>
+        </button>
 
-      <label>Vacancy</label>
-      <input type="number" [(ngModel)]="shareVacancy" name="vacancy" (change)="setShareVacancy()">
+        <button type="button"
+          [class.active]="hostel.type === 'girls'"
+          (click)="changePropertyType('girls')">
+          <i class="fa-solid fa-person-dress"></i>
+          <span>Girls Hostel</span>
+          <i *ngIf="hostel.type === 'girls'"
+            class="fa-solid fa-circle-check selected-check"></i>
+        </button>
 
-      <!-- SHARING IMAGES -->
-      <label>Sharing Images</label>
-      <input type="file" multiple accept="image/*" (change)="selectSharingImages($event)">
+        <button type="button"
+          [class.active]="hostel.type === 'room'"
+          (click)="changePropertyType('room')">
+          <i class="fa-solid fa-house"></i>
+          <span>Rental Room</span>
+          <i *ngIf="hostel.type === 'room'"
+            class="fa-solid fa-circle-check selected-check"></i>
+        </button>
 
-      <div class="preview">
-        <div *ngFor="let img of sharingImagePreviews; let i = index">
-          <img [src]="img" width="100%" height="100%">
-          <button type="button" (click)="removeSharingImage(i)">✖</button>
+      </div>
+    </div>
+
+    <div class="form-grid">
+
+      <div class="form-group full-width">
+        <label class="field-label">Property Name <span>*</span></label>
+        <div class="input-wrap">
+          <i class="fa-solid fa-building"></i>
+          <input type="text"
+            [(ngModel)]="hostel.name"
+            name="name"
+            placeholder="Enter property name"
+            required>
         </div>
       </div>
 
-      <!-- SHARING VIDEOS -->
-      <label>Sharing Videos</label>
-      <input type="file" multiple accept="video/*" (change)="selectSharingVideos($event)">
-
-      <div class="preview">
-        <div *ngFor="let vid of sharingVideoPreviews; let i = index">
-          <video [src]="vid" controls></video>
-          <button type="button" (click)="removeSharingVideo(i)">✖</button>
-        </div>
-      </div>
-
     </div>
 
-    <!-- HOSTEL SERVICES -->
-<label>Hostel Services</label>
+  </section>
 
-<div class="services">
-  <div *ngFor="let service of servicesList" class="service-item">
-    <label class="service-label">
-      <input
-        type="checkbox"
-        [checked]="selectedServices.includes(service)"
-        (change)="toggleService(service, $event)" />
 
-      <span>{{ service }}</span>
-    </label>
+
+<!-- 02. PROPERTY LOCATION -->
+<section class="form-section">
+
+  <div class="section-heading">
+    <div class="section-number">02</div>
+    <div>
+      <h3>Property Location</h3>
+      <p>Select your exact property location</p>
+    </div>
   </div>
-</div>
 
+  <!-- PICK LOCATION BUTTON -->
+  <div class="pick-location-box" *ngIf="!showLocationMap">
 
-    <!-- LOCATION -->
-    <label>Location</label>
-    <button type="button" (click)="getLiveLocation()">Use my location</button>
-
-    <div *ngIf="hostel.location">
-      Lat: {{ hostel.location.coordinates[1] }} <br>
-      Lng: {{ hostel.location.coordinates[0] }}
+    <div class="pick-location-icon">
+      <i class="fa-solid fa-map-location-dot"></i>
     </div>
 
-    <button type="submit" class="create-btn">Create Hostel</button>
-  </form>
-</div>
+    <div class="pick-location-content">
+      <strong>Choose Property Location</strong>
+      <p>Pick your property location using the map or GPS.</p>
+    </div>
+
+    <button type="button"
+      class="location-btn"
+      (click)="openLocationMap()">
+
+      <i class="fa-solid fa-location-dot"></i>
+      {{ hasSelectedLocation ? 'Change Location' : 'Pick Location' }}
+
+    </button>
+
+  </div>
+
+  <!-- MAP SECTION: SHOW AFTER BUTTON CLICK -->
+  <div class="location-map-container" *ngIf="showLocationMap">
+
+    <!-- SEARCH ADDRESS -->
+    <div class="form-group full-width">
+
+      <label class="field-label">Search Location</label>
+
+      <div class="location-search">
+
+        <div class="input-wrap">
+          <i class="fa-solid fa-magnifying-glass"></i>
+
+          <input type="text"
+            [(ngModel)]="addressSearch"
+            name="addressSearch"
+            placeholder="Search area, street or landmark"
+            (keydown)="onAddressSearchKey($event)">
+        </div>
+
+        <button type="button"
+          class="location-btn"
+          (click)="searchAddress()"
+          [disabled]="searchingAddress">
+
+          {{ searchingAddress ? 'Searching...' : 'Search' }}
+
+        </button>
+
+      </div>
+
+    </div>
+
+    <!-- GPS BUTTON -->
+    <div class="gps-location-box">
+
+      <div class="gps-icon">
+        <i class="fa-solid fa-location-crosshairs"></i>
+      </div>
+
+      <div class="gps-content">
+        <strong>Use Current Live Location</strong>
+        <p>Detect your current location automatically.</p>
+      </div>
+
+      <button type="button"
+        class="location-btn gps-btn"
+        (click)="getLiveLocation()"
+        [disabled]="gettingLocation">
+
+        <i class="fa-solid fa-location-arrow"></i>
+
+        {{ gettingLocation ? 'Detecting...' : 'Use My Location' }}
+
+      </button>
+
+    </div>
+
+    <!-- INSTRUCTIONS -->
+    <div class="map-instructions">
+      <i class="fa-solid fa-map-pin"></i>
+
+      <div>
+        <strong>Pick Your Property on the Map</strong>
+        <p>Click on the map to place the pin. You can also drag the pin to adjust the exact location.</p>
+      </div>
+    </div>
+
+    <!-- MAP -->
+    <div #propertyMap class="property-map"></div>
+
+    <!-- STATUS -->
+    <div class="location-status">
+      <i class="fa-solid fa-circle-info"></i>
+      {{ locationMessage }}
+    </div>
+
+    <!-- COORDINATES -->
+    <div class="coordinate-box" *ngIf="hasSelectedLocation">
+
+      <div>
+        <span>Latitude</span>
+        <strong>{{ hostel.location.coordinates[1] }}</strong>
+      </div>
+
+      <div>
+        <span>Longitude</span>
+        <strong>{{ hostel.location.coordinates[0] }}</strong>
+      </div>
+
+    </div>
+
+    <!-- CONFIRM / CLOSE -->
+    <div class="map-action-buttons">
+
+      <button type="button"
+        class="cancel-location-btn"
+        (click)="closeLocationMap()">
+
+        Cancel
+
+      </button>
+
+      <button type="button"
+        class="confirm-location-btn"
+        [disabled]="!hasSelectedLocation"
+        (click)="confirmLocation()">
+
+        <i class="fa-solid fa-check"></i>
+        Confirm Location
+
+      </button>
+
+    </div>
+
+  </div>
+
+  <!-- SELECTED LOCATION DETAILS -->
+  <div class="selected-location-card" *ngIf="hasSelectedLocation">
+
+    <div class="selected-location-icon">
+      <i class="fa-solid fa-location-dot"></i>
+    </div>
+
+    <div class="selected-location-info">
+      <strong>Selected Property Location</strong>
+      <p>{{ hostel.address || 'Address is being detected...' }}</p>
+      <span>{{ hostel.area }}</span>
+    </div>
+
+    <button type="button"
+      class="edit-location-btn"
+      (click)="openLocationMap()">
+
+      <i class="fa-solid fa-pen"></i>
+      Edit
+
+    </button>
+
+  </div>
+
+  <!-- AREA AND ADDRESS -->
+  <div class="form-grid location-fields">
+
+    <div class="form-group">
+      <label class="field-label">Area <span>*</span></label>
+
+      <div class="input-wrap">
+        <i class="fa-solid fa-location-dot"></i>
+
+        <input type="text"
+          [(ngModel)]="hostel.area"
+          name="area"
+          placeholder="Enter area"
+          required>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="field-label">Full Address <span>*</span></label>
+
+      <div class="input-wrap">
+        <i class="fa-solid fa-map-location-dot"></i>
+
+        <input type="text"
+          [(ngModel)]="hostel.address"
+          name="address"
+          placeholder="Street, landmark, city"
+          required>
+      </div>
+    </div>
+
+  </div>
+
+</section>
+
+
+
+  <!-- 03. RENTAL ROOM DETAILS -->
+  <section class="form-section" *ngIf="hostel.type === 'room'">
+
+    <div class="section-heading">
+      <div class="section-number">03</div>
+      <div>
+        <h3>Rental Room Details</h3>
+        <p>Enter your rental property information</p>
+      </div>
+    </div>
+
+    <label class="field-label">Property Configuration <span>*</span></label>
+
+    <div class="category-buttons rental-types">
+
+      <button type="button"
+        *ngFor="let type of rentalTypes"
+        [class.active]="hostel.roomType === type"
+        (click)="hostel.roomType = type">
+        <i class="fa-solid fa-house"></i>
+        <span>{{ type }}</span>
+        <i *ngIf="hostel.roomType === type"
+          class="fa-solid fa-circle-check selected-check"></i>
+      </button>
+
+    </div>
+
+    <div class="form-grid">
+
+      <div class="form-group">
+        <label class="field-label">Bedrooms <span>*</span></label>
+        <div class="input-wrap">
+          <i class="fa-solid fa-bed"></i>
+          <input type="number"
+            [(ngModel)]="hostel.bedrooms"
+            name="bedrooms"
+            min="0"
+            required>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="field-label">Bathrooms <span>*</span></label>
+        <div class="input-wrap">
+          <i class="fa-solid fa-bath"></i>
+          <input type="number"
+            [(ngModel)]="hostel.bathrooms"
+            name="bathrooms"
+            min="1"
+            required>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="field-label">Monthly Rent (₹) <span>*</span></label>
+        <div class="input-wrap">
+          <i class="fa-solid fa-indian-rupee-sign"></i>
+          <input type="number"
+            [(ngModel)]="hostel.rent"
+            name="rent"
+            min="1"
+            placeholder="Monthly rent"
+            required>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="field-label">Security Deposit (₹)</label>
+        <div class="input-wrap">
+          <i class="fa-solid fa-wallet"></i>
+          <input type="number"
+            [(ngModel)]="hostel.deposit"
+            name="deposit"
+            min="0"
+            placeholder="Security deposit">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="field-label">Built-up Area (Sq.ft)</label>
+        <div class="input-wrap">
+          <i class="fa-solid fa-ruler-combined"></i>
+          <input type="number"
+            [(ngModel)]="hostel.builtUpArea"
+            name="builtUpArea"
+            min="0"
+            placeholder="e.g. 1200">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="field-label">Floor Number</label>
+        <div class="input-wrap">
+          <i class="fa-solid fa-building"></i>
+          <input type="number"
+            [(ngModel)]="hostel.floor"
+            name="floor"
+            min="0"
+            placeholder="e.g. 2">
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Furnishing -->
+    <label class="field-label">Furnishing Status <span>*</span></label>
+
+    <div class="category-buttons">
+
+      <button type="button"
+        *ngFor="let item of furnishingTypes"
+        [class.active]="hostel.furnishing === item"
+        (click)="hostel.furnishing = item">
+        <i class="fa-solid fa-couch"></i>
+        <span>{{ item }}</span>
+        <i *ngIf="hostel.furnishing === item"
+          class="fa-solid fa-circle-check selected-check"></i>
+      </button>
+
+    </div>
+
+    <!-- Preferred tenants -->
+    <div class="form-group">
+      <label class="field-label">Preferred Tenants</label>
+
+      <div class="input-wrap">
+        <i class="fa-solid fa-users"></i>
+
+        <select
+          [(ngModel)]="hostel.preferredTenants"
+          name="preferredTenants">
+          <option value="">Select tenants</option>
+          <option value="family">Family</option>
+          <option value="bachelors">Bachelors</option>
+          <option value="students">Students</option>
+          <option value="working">Working Professionals</option>
+          <option value="any">Anyone</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Rental amenities -->
+    <label class="field-label">Property Amenities</label>
+
+    <div class="services">
+
+      <label class="service-label"
+        *ngFor="let feature of rentalFeatures">
+
+        <input type="checkbox"
+          [checked]="hostel.features.includes(feature)"
+          (change)="toggleRentalFeature(feature, $event)">
+
+        <span class="custom-checkbox">
+          <i class="fa-solid fa-check"></i>
+        </span>
+
+        <span class="service-name">{{ feature }}</span>
+
+      </label>
+
+    </div>
+
+  </section>
+
+
+  <!-- 03. HOSTEL SHARING -->
+  <section class="form-section"
+    *ngIf="hostel.type === 'boys' || hostel.type === 'girls'">
+
+    <div class="section-heading">
+      <div class="section-number">03</div>
+      <div>
+        <h3>Rooms &amp; Sharing</h3>
+        <p>Choose a room type to configure</p>
+      </div>
+    </div>
+
+    <label class="field-label">Select Sharing Type</label>
+
+    <div class="sharing">
+
+      <button type="button"
+        *ngFor="let s of sharing"
+        class="share-box"
+        [class.active]="selectedShare === s"
+        (click)="selectSharing(s)">
+
+        <i class="fa-solid fa-bed"></i>
+        <strong>{{ s }}</strong>
+        <span>Sharing</span>
+
+        <i *ngIf="selectedShare === s"
+          class="fa-solid fa-circle-check selected-check"></i>
+
+      </button>
+
+    </div>
+
+    <div *ngIf="selectedShare !== null" class="sharing-details">
+
+      <div class="form-grid">
+
+        <div class="form-group">
+          <label class="field-label">Monthly Price (₹)</label>
+          <div class="input-wrap">
+            <i class="fa-solid fa-indian-rupee-sign"></i>
+            <input type="number"
+              [(ngModel)]="sharePrice"
+              name="price"
+              min="0"
+              (change)="setSharePrice()">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="field-label">Available Beds</label>
+          <div class="input-wrap">
+            <i class="fa-solid fa-users"></i>
+            <input type="number"
+              [(ngModel)]="shareVacancy"
+              name="vacancy"
+              min="0"
+              (change)="setShareVacancy()">
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Your existing room image upload -->
+      <div class="form-group">
+        <label class="field-label">Room Images</label>
+        <input type="file"
+          accept="image/*"
+          multiple
+          (change)="onSharingImagesSelected($event)">
+      </div>
+
+      <div class="preview-grid">
+        <div *ngFor="let preview of sharingImagePreviews; let i = index">
+          <img [src]="preview" alt="Room image preview">
+          <button type="button" (click)="removeSharingImage(i)">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Your existing room video upload -->
+      <div class="form-group">
+        <label class="field-label">Room Videos</label>
+        <input type="file"
+          accept="video/*"
+          multiple
+          (change)="onSharingVideosSelected($event)">
+      </div>
+
+      <div class="preview-grid">
+        <div *ngFor="let preview of sharingVideoPreviews; let i = index">
+          <video [src]="preview" controls></video>
+          <button type="button" (click)="removeSharingVideo(i)">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Hostel facilities -->
+    <label class="field-label">Hostel Facilities</label>
+
+    <div class="services">
+      <label class="service-label"
+        *ngFor="let service of servicesList">
+
+        <input type="checkbox"
+          [checked]="selectedServices.includes(service)"
+          (change)="toggleService(service, $event)">
+
+        <span class="custom-checkbox">
+          <i class="fa-solid fa-check"></i>
+        </span>
+
+        <span class="service-name">{{ service }}</span>
+
+      </label>
+    </div>
+
+  </section>
+
+
+  <!-- SUBMIT -->
+  <div class="form-actions">
+
+
+    <button type="submit"
+      class="create-btn"
+      [disabled]="propertyForm.invalid">
+
+      <i class="fa-solid fa-plus"></i>
+      {{ hostel.type === 'room' ? 'Create Rental Listing' : 'Create Hostel Listing' }}
+
+    </button>
+
+  </div>
+
+</form>

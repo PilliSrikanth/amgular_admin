@@ -1,44 +1,146 @@
-<div class="page" *ngIf="dateWiseUsers.length; else noUsers">
 
-  <!-- header -->
-  <div class="top-bar">
-    <i class="fa-solid fa-ellipsis-vertical"></i>
-    <span>hostelName</span>
-    <i class="fa-regular fa-bell"></i>
-  </div>
+<div class="page">
 
-  <!-- search -->
+  <!-- Header -->
+  <header class="top-bar">
+    <button class="icon-btn" type="button" routerLink="/profile"
+      aria-label="Profile">
+      <i class="fa-solid fa-arrow-left"></i>
+    </button>
+
+    <div class="header-title">
+      <span class="eyebrow">PROPERTY MANAGEMENT</span>
+      <h2>Hostel Users</h2>
+    </div>
+
+    <button class="icon-btn" type="button" routerLink="/notification"
+      aria-label="Notifications">
+      <i class="fa-regular fa-bell"></i>
+    </button>
+  </header>
+
+  <!-- Summary -->
+  <section class="summary-banner">
+    <div class="summary-content">
+      <span class="summary-label">RESIDENT DIRECTORY</span>
+      <h1>Manage Your Users</h1>
+      <p>View residents, check account status, and open conversations.</p>
+    </div>
+
+    <div class="summary-icon">
+      <i class="fa-solid fa-users"></i>
+    </div>
+  </section>
+
+  <!-- Search -->
   <div class="search-box">
     <i class="fa-solid fa-magnifying-glass"></i>
-    <input type="text" placeholder="Search users..." >
+
+    <input
+      type="text"
+      placeholder="Search users by name..."
+      [(ngModel)]="searchText"
+      aria-label="Search hostel users" />
+
+    <button
+      *ngIf="searchText"
+      type="button"
+      class="clear-search"
+      (click)="searchText = ''"
+      aria-label="Clear search">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
   </div>
 
-  <!-- date wise loop -->
-<ng-container *ngFor="let group of dateWiseUsers">
-  <div class="date-title">{{ group.date }}</div>
+  <!-- Users content -->
+  <ng-container *ngIf="dateWiseUsers?.length; else noUsers">
 
-  <div class="user-card">
-    <div class="user-row"
-     *ngFor="let user of group.users"
-     [routerLink]="['/chat', ownerId, hostelId, user._id]">
-  <div class="circle">{{user.name[0] | uppercase}}</div>
-  <div class="info">
-    <div class="name">{{user.name}}</div>
-    <div class="time">{{user.time}}</div>
-  </div>
+    <div class="directory-heading">
+      <div>
+        <h3>User Directory</h3>
+        <p>Residents grouped by date</p>
+      </div>
+    </div>
 
-  <i class="fa-solid fa-trash delete" (click)="deleteUser(user._id)"></i>
+    <!-- Date-wise groups -->
+    <section class="date-group" *ngFor="let group of dateWiseUsers">
 
-  <i class="fa-solid" [ngClass]="user.active ? 'fa-circle-check enable':'fa-circle-xmark disable'"></i>
+      <div class="date-title">
+        <div class="date-icon">
+          <i class="fa-regular fa-calendar"></i>
+        </div>
+
+        <div class="date-info">
+          <h4>{{ group.date }}</h4>
+          <span>{{ group.users.length }} users</span>
+        </div>
+      </div>
+
+      <div class="user-card">
+
+        <div
+          class="user-row"
+          *ngFor="let user of group.users"
+          [routerLink]="['/admin-support', user._id]"
+          [queryParams]="{}"
+          title="Open chat with {{ user.name }}">
+
+          <!-- Avatar -->
+          <div class="circle">
+            {{ user.name?.charAt(0) || '?' | uppercase }}
+          </div>
+
+          <!-- User information -->
+          <div class="info">
+            <div class="name">{{ user.name || 'Unnamed User' }}</div>
+            <div class="user-meta">
+              <i class="fa-regular fa-clock"></i>
+              <span>{{ user.time || 'Time unavailable' }}</span>
+            </div>
+          </div>
+
+          <!-- Account status -->
+          <div
+            class="status"
+            [class.status-active]="user.active"
+            [class.status-inactive]="!user.active">
+
+            <span class="status-dot"></span>
+            {{ user.active ? 'Active' : 'Inactive' }}
+          </div>
+
+          <!-- Delete -->
+          <button
+            type="button"
+            class="delete-btn"
+            title="Delete user"
+            aria-label="Delete user"
+            (click)="onDeleteClick($event, user._id)">
+
+            <i class="fa-regular fa-trash-can"></i>
+          </button>
+
+          <!-- Chat indicator -->
+          <i class="fa-solid fa-chevron-right row-arrow"></i>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </ng-container>
+
+  <!-- Empty state -->
+  <ng-template #noUsers>
+    <section class="empty-state">
+      <div class="empty-icon">
+        <i class="fa-solid fa-users"></i>
+      </div>
+
+      <h3>No users found</h3>
+      <p>There are currently no users available for this hostel.</p>
+    </section>
+  </ng-template>
+
 </div>
-
-  </div>
-</ng-container>
-
-
-</div>
-
-
-<ng-template #noUsers>
-  <p>No users for this hostel.</p>
-</ng-template>

@@ -58,4 +58,16 @@ export class UsersComponent implements OnInit {
     console.log("Delete user:", id);
   }
 
+
+  
+searchText = '';
+
+onDeleteClick(event: MouseEvent, userId: string): void {
+  // Prevent clicking Delete from opening the chat.
+  event.stopPropagation();
+  event.preventDefault();
+
+  this.deleteUser(userId);
+}
+
 }

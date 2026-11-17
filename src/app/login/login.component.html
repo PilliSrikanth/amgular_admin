@@ -1,30 +1,142 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-</head>
-<body>        
-<div class="parent-container">
-    <div class="child-container">
 
-        <div class="number">
-            <label>Mobile Number</label>
-            <input type="email" [(ngModel)]="email" name="email" placeholder="Enter Your Phone Number">    
+<div class="login-page">
+
+  <!-- LEFT BRANDING SECTION -->
+  <section class="login-hero">
+
+    <div class="brand">
+      <div class="brand-logo">H</div>
+      <span>Hostel<span class="brand-highlight">Hub</span></span>
+    </div>
+
+    <div class="hero-content">
+      <span class="hero-badge">
+        <span class="hero-dot"></span>
+        YOUR SPACE, YOUR COMFORT
+      </span>
+
+      <h1>
+        Find a place<br />
+        <span>to call home.</span>
+      </h1>
+
+      <p>
+        Discover comfortable hostels, rooms and rental homes
+        that fit your lifestyle and budget.
+      </p>
+
+      <div class="hero-features">
+        <div class="feature">
+          <span class="feature-icon">⌂</span>
+          <div>
+            <strong>Find your space</strong>
+            <small>Rooms and hostels made easy</small>
+          </div>
         </div>
 
-        <div class="name">
-            <label>Password</label><br>
-            <input type="password" [(ngModel)]="password" name="password" placeholder="Enter Your Password">
+        <div class="feature">
+          <span class="feature-icon">✓</span>
+          <div>
+            <strong>Simple and convenient</strong>
+            <small>Connect with property owners</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-footer">
+      Your next chapter starts here.
+    </div>
+
+  </section>
+
+  <!-- RIGHT LOGIN SECTION -->
+  <section class="login-section">
+
+    <div class="login-card">
+
+      <div class="mobile-brand">
+        <div class="brand-logo">H</div>
+        <span>Hostel<span class="brand-highlight">Hub</span></span>
+      </div>
+
+      <div class="welcome-icon">
+        <span>👋</span>
+      </div>
+
+      <div class="login-heading">
+        <h2>Welcome back!</h2>
+        <p>Enter your details to sign in to your account.</p>
+      </div>
+
+      <div class="login-form">
+
+        <!-- MOBILE / EMAIL -->
+        <div class="form-group">
+          <label for="loginEmail">Mobile number or email</label>
+
+          <div class="input-wrapper">
+            <span class="input-icon">✉</span>
+
+            <input
+              id="loginEmail"
+              type="text"
+              [(ngModel)]="email"
+              name="email"
+              placeholder="Enter mobile number or email"
+              autocomplete="username"
+              required
+            />
+          </div>
         </div>
 
-        <div class="button">
-            <button type="button" (click)="loginUser()">Login</button>
+        <!-- PASSWORD -->
+        <div class="form-group">
+          <label for="loginPassword">Password</label>
+
+          <div class="input-wrapper">
+            <span class="input-icon">♙</span>
+
+            <input
+              id="loginPassword"
+              type="password"
+              [(ngModel)]="password"
+              name="password"
+              placeholder="Enter your password"
+              autocomplete="current-password"
+              required
+            />
+          </div>
         </div>
+
+        <!-- LOGIN BUTTON -->
+        <button
+          type="button"
+          class="login-button"
+          (click)="loginUser()"
+        >
+          <span>Login to your account</span>
+          <span class="button-arrow">→</span>
+        </button>
+
+        <div class="secure-note">
+          <span>🔒</span>
+          Your account details are kept secure.
+        </div>
+
+      </div>
+
+      <div class="login-bottom">
+        <span>Need help signing in?</span>
+        <span class="support-text">Contact support</span>
+      </div>
 
     </div>
-</div>
 
-</body>
-</html>
+    <div class="copyright">
+      © {{ currentYear }} HostelHub. All rights reserved.
+    </div>
+
+  </section>
+
+</div>

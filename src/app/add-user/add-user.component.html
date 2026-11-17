@@ -1,53 +1,201 @@
+
 <div class="page">
 
-  <!-- top -->
-  <div class="top-bar">
-    <i class="fa-solid fa-arrow-left" (click)="back()"></i>
-    <h3>Add User</h3>
-    <i class="fa-regular fa-bell"></i>
+  <!-- Header -->
+  <header class="top-bar">
+    <button type="button" class="icon-btn" (click)="back()" aria-label="Go back">
+      <i class="fa-solid fa-arrow-left"></i>
+    </button>
+
+    <div class="header-title">
+      <span class="eyebrow">PROPERTY MANAGEMENT</span>
+      <h2>Add Hostel User</h2>
+    </div>
+
+    <button
+      type="button"
+      class="icon-btn"
+      routerLink="/notification"
+      aria-label="Notifications">
+      <i class="fa-regular fa-bell"></i>
+    </button>
+  </header>
+
+  <!-- Intro -->
+  <section class="intro-section">
+    <div class="intro-icon">
+      <i class="fa-solid fa-user-plus"></i>
+    </div>
+
+    <div>
+      <h1>Add a Resident</h1>
+      <p>Find an existing user or enter their details below.</p>
+    </div>
+  </section>
+
+  <div class="content-layout">
+
+    <!-- Search section -->
+    <section class="search-section">
+      <div class="section-heading">
+        <h3>Find Existing User</h3>
+        <p>Search by name, email or mobile number.</p>
+      </div>
+
+      <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass"></i>
+
+        <input
+          type="text"
+          placeholder="Search users..."
+          [(ngModel)]="searchText"
+          (keyup.enter)="searchUsers()"
+          aria-label="Search users" />
+
+        <button
+          type="button"
+          class="search-btn"
+          (click)="searchUsers()">
+          Search
+        </button>
+      </div>
+
+      <!-- Search results -->
+      <div class="results-section" *ngIf="selectedUser?.length">
+
+        <div class="results-heading">
+          <h4>Search Results</h4>
+          <span>{{ selectedUser.length }} found</span>
+        </div>
+
+        <button
+          type="button"
+          *ngFor="let user of selectedUser"
+          class="user-card"
+          (click)="selectUser(user)">
+
+          <img
+            [src]="user.image || 'assets/noimage.png'"
+            [alt]="user.name || 'User'"
+            class="user-avatar" />
+
+          <div class="user-info">
+            <strong>{{ user.name }}</strong>
+            <span>{{ user.mobile }}</span>
+          </div>
+
+          <i class="fa-solid fa-chevron-right result-arrow"></i>
+        </button>
+
+      </div>
+    </section>
+
+    <!-- Add user form -->
+    <section class="form-section">
+
+      <div class="section-heading">
+        <h3>User Details</h3>
+        <p>Enter the resident's information to continue.</p>
+      </div>
+
+      <form (ngSubmit)="addUserToHostel()" #addUserForm="ngForm">
+
+        <div class="form-grid">
+
+          <!-- Name -->
+          <div class="form-group">
+            <label for="userName">Full Name</label>
+
+            <div class="input-wrapper">
+              <i class="fa-regular fa-user"></i>
+              <input
+                id="userName"
+                type="text"
+                [(ngModel)]="form.name"
+                name="name"
+                placeholder="Enter full name"
+                autocomplete="name"
+                required />
+            </div>
+          </div>
+
+          <!-- Email -->
+          <div class="form-group">
+            <label for="userEmail">Email Address</label>
+
+            <div class="input-wrapper">
+              <i class="fa-regular fa-envelope"></i>
+              <input
+                id="userEmail"
+                type="email"
+                [(ngModel)]="form.email"
+                name="email"
+                placeholder="Enter email address"
+                autocomplete="email"
+                required
+                email />
+            </div>
+          </div>
+
+          <!-- Mobile -->
+          <div class="form-group">
+            <label for="userPhone">Mobile Number</label>
+
+            <div class="input-wrapper">
+              <i class="fa-solid fa-phone"></i>
+              <input
+                id="userPhone"
+                type="tel"
+                [(ngModel)]="form.phone"
+                name="phone"
+                placeholder="Enter mobile number"
+                autocomplete="tel"
+                inputmode="numeric"
+                maxlength="10"
+                pattern="[0-9]{10}"
+                required />
+            </div>
+          </div>
+
+          <!-- Sharing -->
+          <div class="form-group">
+            <label for="sharing">Room Sharing</label>
+
+            <div class="input-wrapper select-wrapper">
+              <i class="fa-solid fa-bed"></i>
+
+              <select
+                id="sharing"
+                [(ngModel)]="form.sharing"
+                name="sharing"
+                required>
+                <option [ngValue]="1">2 Sharing</option>
+                <option [ngValue]="2">3 Sharing</option>
+                <option [ngValue]="3">4 Sharing</option>
+                <option [ngValue]="4">5 Sharing</option>
+                <option [ngValue]="5">6 Sharing</option>
+              </select>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Form actions -->
+        <div class="form-actions">
+          <button
+            type="submit"
+            class="add-btn"
+            [disabled]="addUserForm.invalid">
+
+            <i class="fa-solid fa-user-plus"></i>
+            Add User to Hostel
+          </button>
+        </div>
+
+      </form>
+
+    </section>
+
   </div>
-
-  <!-- search -->
- <!-- Add search button -->
-<div class="search-box">
-  <i class="fa-solid fa-magnifying-glass"></i>
-  <input type="text" placeholder="Search users..." [(ngModel)]="searchText">
-  <button (click)="searchUsers()">Search</button>
-</div>
-
-
-  <!-- user card (if found) -->
-<!-- Search results -->
-<div *ngFor="let user of selectedUser" class="user-card" (click)="selectUser(user)">
-  <img [src]="user.image ? user.image : 'assets/noimage.png'" />
-  <b>{{ user.name }}</b>
-  <span>{{ user.mobile }}</span>
-</div>
-
-<!-- Form -->
-<form (ngSubmit)="addUserToHostel()">
-
-  <label>Name</label>
-  <input type="text" [(ngModel)]="form.name" name="name">
-
-  <label>Email</label>
-  <input type="text" [(ngModel)]="form.email" name="email">
-
-  <label>Mobile Number</label>
-  <input type="text" [(ngModel)]="form.phone" name="phone">
-
-  <label>Sharing</label>
-  <select [(ngModel)]="form.sharing" name="sharing">
-    <option [value]="1">2 Sharing</option>
-    <option [value]="2">3 Sharing</option>
-    <option [value]="3">4 Sharing</option>
-    <option [value]="4">5 Sharing</option>
-    <option [value]="5">6 Sharing</option>
-  </select>
-
-  <button class="add-btn">Add</button>
-
-</form>
-
 
 </div>

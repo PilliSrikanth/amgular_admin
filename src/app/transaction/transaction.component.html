@@ -1,54 +1,227 @@
+
 <div class="page">
 
-  <!-- top bar -->
-  <div class="top-bar">
-    <i class="fa-solid fa-ellipsis-vertical"></i>
-    <div class="location">
-      <i class="fa-solid fa-location-dot"></i>
-      <span>ASdigitech</span>
-    </div>
-    <i class="fa-regular fa-bell"></i>
-  </div>
-
-  <!-- search -->
-  <div class="search-box">
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <input type="text" placeholder="Search...">
-  </div>
-
-  <!-- tabs -->
-  <div class="tabs">
-    <div [class.active]="tab=='all'" (click)="tab='all'">ALL</div>
-    <div [class.active]="tab=='latest'" (click)="tab='latest'">LATEST</div>
-  </div>
-
-  <!-- transactions by month -->
-  <div *ngFor="let m of months" class="month-block">
-
-    <div class="month-title">
-      <div>{{m.month}} Received : {{m.transactions.length}}</div>
-      <div>Total : {{getTotal(m.transactions)}}</div>
-    </div>
-
-    <div class="card">
-      <div class="row" *ngFor="let t of m.transactions">
-
-        <div class="left">
-          <div class="icon">M</div>
-          <div class="text">
-            <p>{{t.name}}</p>
-            <small>{{t.time}}</small>
-          </div>
-        </div>
-
-        <div class="right">
-          <p>₹ {{t.amount}}</p>
-          <img [src]="getIcon(t.method)" width="30" height="12"/>
-        </div>
-
+  <!-- Header -->
+  <header class="top-bar">
+    <div class="brand">
+      <div class="brand-icon">
+        <i class="fa-solid fa-building-columns"></i>
+      </div>
+      <div class="brand-text">
+        <h2>ASdigitech</h2>
+        <span>Payment Transactions</span>
       </div>
     </div>
 
+    <button class="icon-btn" aria-label="Notifications">
+      <i class="fa-regular fa-bell"></i>
+    </button>
+  </header>
+
+  <!-- Page Heading -->
+  <section class="page-heading">
+    <div>
+      <span class="eyebrow">PAYMENT MANAGEMENT</span>
+      <h1>Transactions</h1>
+      <p>Track your received payments in one place.</p>
+    </div>
+    <div class="heading-icon">
+      <i class="fa-solid fa-wallet"></i>
+    </div>
+  </section>
+
+  <!-- Summary Cards -->
+  <section class="summary-grid">
+    <div class="summary-card">
+      <div class="summary-top">
+        <span>Total Received</span>
+        <div class="summary-icon orange">
+          <i class="fa-solid fa-indian-rupee-sign"></i>
+        </div>
+      </div>
+      <h2>₹ 48,500</h2>
+      <p><i class="fa-solid fa-arrow-down"></i> Payments received</p>
+    </div>
+
+    <div class="summary-card">
+      <div class="summary-top">
+        <span>Transactions</span>
+        <div class="summary-icon blue">
+          <i class="fa-solid fa-receipt"></i>
+        </div>
+      </div>
+      <h2>24</h2>
+      <p>Recorded payments</p>
+    </div>
+  </section>
+
+  <!-- Search -->
+  <div class="search-box">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="text" placeholder="Search transactions...">
   </div>
+
+  <!-- Tabs -->
+  <div class="filter-row">
+    <div>
+      <h3>Payment History</h3>
+      <p>View your received payments</p>
+    </div>
+
+    <div class="tabs">
+      <button class="active" type="button">All</button>
+      <button type="button">
+        <i class="fa-solid fa-clock"></i> Latest
+      </button>
+    </div>
+  </div>
+
+  <!-- October Transactions -->
+  <section class="month-block">
+    <div class="month-title">
+      <div class="month-heading">
+        <div class="calendar-icon">
+          <i class="fa-regular fa-calendar"></i>
+        </div>
+        <div>
+          <h3>October 2026</h3>
+          <span>3 payments received</span>
+        </div>
+      </div>
+
+      <div class="month-total">
+        <span>Monthly total</span>
+        <strong>₹ 12,500</strong>
+      </div>
+    </div>
+
+    <div class="transaction-card">
+
+      <div class="transaction-row">
+        <div class="transaction-left">
+          <div class="person-icon">R</div>
+          <div class="transaction-info">
+            <h4>Rahul Kumar</h4>
+            <p class="transaction-time">
+              <i class="fa-regular fa-clock"></i> 26 Oct 2026 · 10:30 AM
+            </p>
+            <span class="method-label">UPI Payment</span>
+          </div>
+        </div>
+
+        <div class="transaction-right">
+          <strong class="amount">+ ₹ 5,000</strong>
+          <span class="success-label">
+            <i class="fa-solid fa-circle-check"></i> Received
+          </span>
+        </div>
+      </div>
+
+      <div class="transaction-row">
+        <div class="transaction-left">
+          <div class="person-icon purple">S</div>
+          <div class="transaction-info">
+            <h4>Suresh Reddy</h4>
+            <p class="transaction-time">
+              <i class="fa-regular fa-clock"></i> 24 Oct 2026 · 04:15 PM
+            </p>
+            <span class="method-label">PhonePe</span>
+          </div>
+        </div>
+
+        <div class="transaction-right">
+          <strong class="amount">+ ₹ 4,500</strong>
+          <span class="success-label">
+            <i class="fa-solid fa-circle-check"></i> Received
+          </span>
+        </div>
+      </div>
+
+      <div class="transaction-row">
+        <div class="transaction-left">
+          <div class="person-icon blue-bg">A</div>
+          <div class="transaction-info">
+            <h4>Arun Sharma</h4>
+            <p class="transaction-time">
+              <i class="fa-regular fa-clock"></i> 21 Oct 2026 · 11:20 AM
+            </p>
+            <span class="method-label">Google Pay</span>
+          </div>
+        </div>
+
+        <div class="transaction-right">
+          <strong class="amount">+ ₹ 3,000</strong>
+          <span class="success-label">
+            <i class="fa-solid fa-circle-check"></i> Received
+          </span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- September Transactions -->
+  <section class="month-block">
+    <div class="month-title">
+      <div class="month-heading">
+        <div class="calendar-icon">
+          <i class="fa-regular fa-calendar"></i>
+        </div>
+        <div>
+          <h3>September 2026</h3>
+          <span>2 payments received</span>
+        </div>
+      </div>
+
+      <div class="month-total">
+        <span>Monthly total</span>
+        <strong>₹ 8,000</strong>
+      </div>
+    </div>
+
+    <div class="transaction-card">
+
+      <div class="transaction-row">
+        <div class="transaction-left">
+          <div class="person-icon green-bg">M</div>
+          <div class="transaction-info">
+            <h4>Mahesh Kumar</h4>
+            <p class="transaction-time">
+              <i class="fa-regular fa-clock"></i> 18 Sep 2026 · 02:45 PM
+            </p>
+            <span class="method-label">UPI Payment</span>
+          </div>
+        </div>
+
+        <div class="transaction-right">
+          <strong class="amount">+ ₹ 4,000</strong>
+          <span class="success-label">
+            <i class="fa-solid fa-circle-check"></i> Received
+          </span>
+        </div>
+      </div>
+
+      <div class="transaction-row">
+        <div class="transaction-left">
+          <div class="person-icon pink-bg">V</div>
+          <div class="transaction-info">
+            <h4>Vamsi Krishna</h4>
+            <p class="transaction-time">
+              <i class="fa-regular fa-clock"></i> 05 Sep 2026 · 09:10 AM
+            </p>
+            <span class="method-label">Bank Transfer</span>
+          </div>
+        </div>
+
+        <div class="transaction-right">
+          <strong class="amount">+ ₹ 4,000</strong>
+          <span class="success-label">
+            <i class="fa-solid fa-circle-check"></i> Received
+          </span>
+        </div>
+      </div>
+
+    </div>
+  </section>
 
 </div>
